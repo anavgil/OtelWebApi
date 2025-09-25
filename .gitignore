@@ -362,4 +362,9 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
-#TestRevify.Api/Dockerfiles/tmp/
+#/tmp
+TestRevify.Api/Dockerfiles/tmp/**
+#TestRevify.Api/Dockerfiles/tmp/grafana
+!.yaml
+!.yml
+#!.gitignore

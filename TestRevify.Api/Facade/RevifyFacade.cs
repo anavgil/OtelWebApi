@@ -7,12 +7,12 @@ public static partial class RevifyFacade
     public const string AssemblyName = "liblogger.so";
 
     [DllImport(AssemblyName, EntryPoint = "Logger_testSuma", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int LoggerTestSuma(int arg1,int arg2);
+    public static extern int LoggerTestSuma(int arg1, int arg2);
 
     [DllImport(AssemblyName, EntryPoint = "logger_WaitSeconds", CallingConvention = CallingConvention.Cdecl)]
     public static extern void LoggerWaitSeconds(int arg1);
 
-    public async static ValueTask<int> ExternalInvoke(int n1,int n2)
+    public async static ValueTask<int> ExternalInvoke(int n1, int n2)
     {
         //call to C++ function
         try

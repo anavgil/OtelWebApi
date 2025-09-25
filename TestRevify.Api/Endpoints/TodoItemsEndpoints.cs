@@ -21,7 +21,7 @@ public static class TodoItemsEndpoints
 
         todosApi.WithTags("TestEndpoints");
 
-        todosApi.MapGet("/",() => TypedResults.Ok(sampleTodos));
+        todosApi.MapGet("/", () => TypedResults.Ok(sampleTodos));
         todosApi.MapGet("/{id}", GetTodoByIdAsync);
 
 

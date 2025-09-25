@@ -1,10 +1,10 @@
 using Scalar.AspNetCore;
 using Serilog;
+using Serilog.Enrichers.Span;
 using System.Text.Json.Serialization;
 using TestRevify.Api.Endpoints;
-using TestRevify.Api.Workers;
 using TestRevify.Api.OTL;
-using Serilog.Enrichers.Span;
+using TestRevify.Api.Workers;
 
 var serviceName = "WebApi";
 var builder = WebApplication.CreateSlimBuilder(args);
