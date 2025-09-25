@@ -1,5 +1,15 @@
 services:
+  web:
+    container_name: webApi
+    build: ../
+    ports:
+      - "80:80"
+    environment:
+      - ASPNETCORE_HTTP_PORTS=80
+    networks:
+      - opentelemetry
   loki:
+    container_name: loki
     image: grafana/loki:latest
     ports:
       - "3100:3100"
@@ -8,6 +18,7 @@ services:
       - opentelemetry
 
   grafana:
+    container_name: grafana  
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
@@ -25,6 +36,7 @@ services:
       - opentelemetry
 
   otel-collector:
+    container_name: otel-collector  
     image: otel/opentelemetry-collector-contrib:latest
     command: ["--config=/etc/otel-collector-config.yaml"]
     volumes:
@@ -37,6 +49,7 @@ services:
       - opentelemetry
 
   prometheus:
+    container_name: prometheus  
     image: prom/prometheus:latest
     ports:
       - "9090:9090"
@@ -50,6 +63,7 @@ services:
         - otel-collector
 
   zipkin:
+    container_name: zipkin
     image: openzipkin/zipkin:latest
     ports:
       - "9411:9411"

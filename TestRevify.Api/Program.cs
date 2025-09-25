@@ -1,16 +1,15 @@
 using Scalar.AspNetCore;
 using Serilog;
+using Serilog.Enrichers.Span;
 using System.Text.Json.Serialization;
 using TestRevify.Api.Endpoints;
-using TestRevify.Api.Endpoints.Base;
-using TestRevify.Api.Workers;
 using TestRevify.Api.OTL;
-using Serilog.Enrichers.Span;
+using TestRevify.Api.Workers;
 
 var serviceName = "WebApi";
 var builder = WebApplication.CreateSlimBuilder(args);
-const string outputTemplate =
-    "[{Level:w}]: {Timestamp:dd-MM-yyyy:HH:mm:ss} {MachineName} {EnvironmentName} {SourceContext} {Message}{NewLine}{Exception}";
+//const string outputTemplate =
+//    "[{Level:w}]: {Timestamp:dd-MM-yyyy:HH:mm:ss} {MachineName} {EnvironmentName} {SourceContext} {Message}{NewLine}{Exception}";
 
 builder.Logging.ClearProviders();
 
@@ -22,9 +21,11 @@ builder.Host.UseSerilog((context, services, configuration) =>
     .WriteTo.Console()
     .WriteTo.OpenTelemetry(options =>
     {
-        // El exportador OTLP enviará los datos al Collector
-        //options.Endpoint = "http://otel-collector:4317";
+#if DEBUG
         options.Endpoint = "http://localhost:4317";
+#else                            
+        options.Endpoint = "http://otel-collector:4317";
+#endif
         options.Protocol = Serilog.Sinks.OpenTelemetry.OtlpProtocol.Grpc;
         options.ResourceAttributes = new Dictionary<string, object>
         {
@@ -63,8 +64,7 @@ app.MapScalarApiReference(options =>
 {
     options
     .WithTheme(ScalarTheme.Kepler)
-    .WithLayout(ScalarLayout.Modern)
-    .WithFavicon("https://scalar.com/logo-light.svg");
+    .WithLayout(ScalarLayout.Modern);
 });
 
 app.UseHttpsRedirection();

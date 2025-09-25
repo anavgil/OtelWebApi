@@ -6,18 +6,17 @@ ARG LAUNCHING_FROM_VS
 ARG FINAL_BASE_IMAGE=${LAUNCHING_FROM_VS:+aotdebug}
 
 # Esta fase se usa cuando se ejecuta desde VS en modo rápido (valor predeterminado para la configuración de depuración)
-FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:9.0-alpine AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 80
 
 
 # Esta fase se usa para compilar el proyecto de servicio
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0-alpine AS build
 # Instalación de las dependencias clang/zlib1g-dev para publicar en nativo
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    clang zlib1g-dev
+RUN apk update \
+    && apk add build-base zlib-dev
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["TestRevify.Api.csproj", "."]
@@ -35,14 +34,13 @@ RUN dotnet publish "./TestRevify.Api.csproj" -c $BUILD_CONFIGURATION -o /app/pub
 FROM base AS aotdebug
 USER root
 # Instalación de GDB para admitir la depuración nativa
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-    gdb
+RUN apk update \
+    && apk add gdb
 USER app
 
 # Esta fase se usa en producción o cuando se ejecuta desde VS en modo normal (valor predeterminado cuando no se usa la configuración de depuración)
-FROM ${FINAL_BASE_IMAGE:-mcr.microsoft.com/dotnet/runtime-deps:9.0} AS final
+FROM ${FINAL_BASE_IMAGE:-mcr.microsoft.com/dotnet/runtime-deps:9.0-alpine} AS final
 WORKDIR /app
-EXPOSE 8080
+EXPOSE 80
 COPY --from=publish /app/publish .
 ENTRYPOINT ["./TestRevify.Api"]
